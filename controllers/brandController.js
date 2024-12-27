@@ -3,7 +3,7 @@ import brandModel from "../models/brandModel.js";
 export const fetchAllBrands=async(req,res)=>{
     const query = brandModel.find({});
     try{
-        const data = await query.exec();
+        const data = await query;
         res.status(200).json(data)
     }catch(err){
         res.status(400).json(err);

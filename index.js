@@ -4,6 +4,9 @@ import productRouter from "./routes/productRouter.js";
 import categoryRouter from "./routes/categoryRouter.js";
 import brandRouter from "./routes/brandRouter.js";
 import cors from "cors"
+import userRouter from "./routes/userRouter.js";
+import authRouter from "./routes/authRouter.js";
+import cartRouter from "./routes/cartRouter.js";
 const server = express();
 
 try {
@@ -22,3 +25,6 @@ server.use(cors());
 server.use("/products", productRouter);
 server.use("/categories",categoryRouter)
 server.use("/brands",brandRouter)
+server.use('/user',userRouter)
+server.use('/auth',authRouter)
+server.use('/cart',cartRouter)

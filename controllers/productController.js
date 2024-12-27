@@ -11,7 +11,6 @@ export const createProduct = async (req, res) => {
 
 export const fetchProductsByFilters = async (req, res) => {
   let filterConditions = {};
-  console.log(req.query)
   if (req.query && req.query.category) {
      filterConditions.category = req.query.category;
   }
@@ -57,7 +56,7 @@ export const fetchProductById = async (req,res)=>{
 
 export const updateProductById = async (req,res)=>{
   try{
-    const query = await productModel.findOneAndUpdate({_id:req.params.id}, req.body,{new:true})
+    const query = await productModel.findOneAndUpdate({_id:req.params.id}, req.body,{new:true});
     res.status(200).json(query);
   }
   catch(err){
