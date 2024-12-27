@@ -7,6 +7,7 @@ import cors from "cors"
 import userRouter from "./routes/userRouter.js";
 import authRouter from "./routes/authRouter.js";
 import cartRouter from "./routes/cartRouter.js";
+import orderRouter from "./routes/orderRouter.js";
 const server = express();
 
 try {
@@ -28,3 +29,4 @@ server.use("/brands",brandRouter)
 server.use('/user',userRouter)
 server.use('/auth',authRouter)
 server.use('/cart',cartRouter)
+server.use("/orders",orderRouter)
