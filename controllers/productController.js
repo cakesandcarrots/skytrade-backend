@@ -63,3 +63,9 @@ export const updateProductById = async (req,res)=>{
     res.status(400).json(err);
   }
 }
+
+export const insertData = async (req,res) => {
+    const result = await productModel.insertMany(req.body);
+    return res.status(200).json(result);
+  
+};

@@ -6,7 +6,7 @@ const orderSchema = new Schema({
   user: { type: [Schema.Types.mixed],required: true },
   selectedAddress: { type: Object,required: true},
   paymentMethod: { type: String,required: true },
-  items: { type: Object,required: true },
+  items: { type: [Object],required: true },
   totalAmount: { type: Number },
   totalItems: { type: Number },
   status: { type: String, required: true, default: "pending" },

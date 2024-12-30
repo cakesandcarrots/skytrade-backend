@@ -1,8 +1,7 @@
 import orderModel from "../models/orderModel.js";
 
 export const fetchLoggedInUserOrders=async(req,res)=>{
-
-    const query = orderModel.find({"user.id": req.query.user});
+    const query = orderModel.find({"user.id": req.user.id});
     try{
         const data = await query;
         res.status(200).json(data)
@@ -14,7 +13,7 @@ export const fetchLoggedInUserOrders=async(req,res)=>{
 
 export const fetchAllOrders = async (req, res) => {  
   let query = orderModel.find({});
-  
+
     if (req.query && req.query._sort) {
       const sortField = req.query._sort.startsWith("-")
         ? req.query._sort.slice(1)
@@ -22,6 +21,7 @@ export const fetchAllOrders = async (req, res) => {
       const sortOrder = req.query._sort.startsWith("-") ? -1 : 1;
       query = query.sort({ [sortField]: sortOrder });
     }
+
   
     if (req.query && req.query._page && req.query._per_page) {
       query = query

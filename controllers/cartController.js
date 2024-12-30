@@ -2,7 +2,7 @@ import cartModel from "../models/cartModel.js";
 
 
 export const fetchCartByUser=async(req,res)=>{
-    const query = cartModel.find({user: req.query.user}, { quantity: 1, product: 1, user: 1, _id: 0 }).populate('user').populate('product');
+    const query = cartModel.find({user: req.user.id}, { quantity: 1, product: 1, user: 1, _id: 0 }).populate('user').populate('product');
     try{
         const data = await query;
         res.status(200).json(data)
@@ -14,7 +14,8 @@ export const fetchCartByUser=async(req,res)=>{
 
 
 export const addToCart = async (req, res) => {
-    const cart = new cartModel(req.body);
+  const query = {...req.body,user: req.user.id}
+    const cart = new cartModel(query);
     try {
       const response = await cart.save()
       const data = await response.populate('product')
