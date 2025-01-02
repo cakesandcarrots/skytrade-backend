@@ -14,13 +14,11 @@ import dotenv from "dotenv";
 import { Strategy as LocalStrategy } from "passport-local";
 import userModel from "./models/userModel.js";
 import bcrypt from "bcrypt";
-import { cookieExtractor  } from "./services/common.js";
-import { Strategy as JwtStrategy,ExtractJwt} from "passport-jwt";
+import { cookieExtractor } from "./services/common.js";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import cookieParser from "cookie-parser";
 import { isAuth } from "./services/common.js";
-
-
-
+import Stripe from "stripe";
 
 dotenv.config();
 
@@ -31,14 +29,47 @@ const server = express();
 
 
 try {
-  await mongoose.connect("mongodb://127.0.0.1:27017/skytrade");
+  await mongoose.connect(process.env.MONGO_CONNECTION_URL);
   console.log("Database Connected Sucessfully");
 } catch (error) {
   console.log(error);
 }
 
-server.listen(3000, () => {
+server.listen(process.env.PORT, () => {
   console.log("server started");
+});
+
+
+const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET;
+server.post('/webhook', express.raw({type: 'application/json'}), (request, response) => {
+  const sig = request.headers['stripe-signature'];
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+  }
+  catch (err) {
+    response.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'payment_intent.succeeded':
+      const paymentIntent = event.data.object;
+      console.log('PaymentIntent was successful!');
+      break;
+    case 'payment_method.attached':
+      const paymentMethod = event.data.object;
+      console.log('PaymentMethod was attached to a Customer!');
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a response to acknowledge receipt of the event
+  response.json({received: true});
 });
 server.use(cookieParser());
 server.use(passport.initialize());
@@ -49,17 +80,30 @@ server.use(
     saveUninitialized: false,
   })
 );
+
 server.use(passport.session());
 server.use(express.json());
 
 server.use(
   cors({
-    origin: 'http://localhost:5173', 
-    credentials: true, 
+    origin: "http://localhost:5173",
+    credentials: true,
   })
 );
+const stripe = new Stripe( process.env.STRIPE_TEST_SECRET_API);
 
+server.post("/create-payment-intent", async (req, res) => {
+  const { totalAmount } = req.body;
+  console.log(totalAmount);
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: Math.round(totalAmount * 100),
+    currency: "inr",
+  });
 
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
+});
 
 passport.use(
   "local",
@@ -67,16 +111,12 @@ passport.use(
     { usernameField: "email", passwordField: "password" },
     async function (email, password, done) {
       try {
-        const user = await userModel.findOne(
-          { email },
-          "id email password"
-        );
+        const user = await userModel.findOne({ email }, "id email password");
         if (!user) {
           return done(null, false, {
             message: "No user exists with this email.",
           });
         }
-
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
@@ -108,6 +148,7 @@ passport.use(
 );
 
 
+
 passport.serializeUser(function (user, cb) {
   process.nextTick(function () {
     console.log("Serializing user:", user.id);
@@ -129,5 +170,3 @@ server.use("/user", userRouter);
 server.use("/auth", authRouter);
 server.use("/cart", isAuth(), cartRouter);
 server.use("/orders", isAuth(), orderRouter);
-
-

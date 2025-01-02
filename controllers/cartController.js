@@ -2,7 +2,7 @@ import cartModel from "../models/cartModel.js";
 
 
 export const fetchCartByUser=async(req,res)=>{
-    const query = cartModel.find({user: req.user.id}, { quantity: 1, product: 1, user: 1, _id: 0 }).populate('user').populate('product');
+    const query = cartModel.find({user: req.user.id}, { quantity: 1, product: 1, user: 1, _id: 1 }).populate('user').populate('product');
     try{
         const data = await query;
         res.status(200).json(data)
@@ -35,8 +35,9 @@ export const addToCart = async (req, res) => {
   }
 
   export const updateCart = async (req,res)=>{
+ 
     try{
-      const query = await cartModel.findByIdAndUpdate(req.params.id,req.body,{new:true});
+      const query = await cartModel.findOneAndUpdate({product: req.params.id},req.body,{new:true});
       const data = await  query.populate('product')
       res.status(200).json(data)
     }catch(err){

@@ -2,7 +2,6 @@ import userModel from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 export const fetchLoggedInUserDetails = async (req, res) => {
-  console.log(req.user)
   try {
     const query = await userModel.findOne({ _id: req.user.id });
    return res.status(200).json(query);
