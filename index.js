@@ -19,8 +19,9 @@ import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import cookieParser from "cookie-parser";
 import { isAuth } from "./services/common.js";
 import Stripe from "stripe";
-
 dotenv.config();
+
+
 
 let opts = {};
 opts.jwtFromRequest = cookieExtractor;
@@ -57,15 +58,12 @@ server.post('/webhook', express.raw({type: 'application/json'}), (request, respo
   switch (event.type) {
     case 'payment_intent.succeeded':
       const paymentIntent = event.data.object;
-      console.log('PaymentIntent was successful!');
       break;
     case 'payment_method.attached':
       const paymentMethod = event.data.object;
-      console.log('PaymentMethod was attached to a Customer!');
       break;
     // ... handle other event types
     default:
-      console.log(`Unhandled event type ${event.type}`);
   }
 
   // Return a response to acknowledge receipt of the event
@@ -94,7 +92,6 @@ const stripe = new Stripe( process.env.STRIPE_TEST_SECRET_API);
 
 server.post("/create-payment-intent", async (req, res) => {
   const { totalAmount } = req.body;
-  console.log(totalAmount);
   const paymentIntent = await stripe.paymentIntents.create({
     amount: Math.round(totalAmount * 100),
     currency: "inr",
@@ -111,7 +108,8 @@ passport.use(
     { usernameField: "email", passwordField: "password" },
     async function (email, password, done) {
       try {
-        const user = await userModel.findOne({ email }, "id email password");
+        const data = {email: `${email}`}
+        const user = await userModel.findOne(data, "id email password");
         if (!user) {
           return done(null, false, {
             message: "No user exists with this email.",
@@ -151,7 +149,6 @@ passport.use(
 
 passport.serializeUser(function (user, cb) {
   process.nextTick(function () {
-    console.log("Serializing user:", user.id);
     return cb(null, user);
   });
 });
@@ -170,3 +167,7 @@ server.use("/user", userRouter);
 server.use("/auth", authRouter);
 server.use("/cart", isAuth(), cartRouter);
 server.use("/orders", isAuth(), orderRouter);
+
+
+//mail endpoint
+

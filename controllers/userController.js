@@ -11,6 +11,7 @@ export const fetchLoggedInUserDetails = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
+
   try {
     const saltRounds = 10;
     const { password } = req.body;

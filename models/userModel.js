@@ -8,6 +8,7 @@ const userSchema = new Schema(
     addresses: { type: [Schema.Types.Mixed] },
     role: { type: String, required: true, default: "user" },
     password: { type: String, required: true },
+    passwordResetToken:{type: String , default : ''}
   },
   { collection: "users" }
 );
