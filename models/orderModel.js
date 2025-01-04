@@ -11,7 +11,7 @@ const orderSchema = new Schema({
   totalItems: { type: Number },
   status: { type: String, required: true, default: "pending" },
 },{
-    collection: 'orders'
+    collection: 'orders',timestamps: true
 });
 
 const virtual = orderSchema.virtual("id");

@@ -19,7 +19,10 @@ export const login = (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  return res.status(200).json({ message: "Logged Out Successfully" });
+  return res.cookie('jwt',null,{
+    expires: new Date(Date.now()),
+    httpOnly: true
+  }).sendStatus(200);
 };
 
 export const checkAuth = async (req, res) => {

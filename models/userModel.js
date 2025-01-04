@@ -10,7 +10,8 @@ const userSchema = new Schema(
     password: { type: String, required: true },
     passwordResetToken:{type: String , default : ''}
   },
-  { collection: "users" }
+  { collection: "users" ,timestamps: true},
+  
 );
 
 const virtual = userSchema.virtual("id");

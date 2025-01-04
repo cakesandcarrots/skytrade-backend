@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { SchemaType } from "mongoose";
 
 const { Schema } = mongoose;
 
@@ -11,11 +11,12 @@ const productSchema = new Schema({
   rating: { type: Number, required: true, default: 0 },
   stock: { type: Number, required: true,min:[0,"wrong min stock"], max: [10000,"wrong max stock"] },
   brand: { type: String },
-  reviews: {type: [Object]},
-  images: { type: [String], required: true },
+  reviews: {type: [Object]},  images: { type: [String], required: true },
   thumbnail: { type: String, required: true },
-  deleted: {type:Boolean,required: true, default : false}
-},{collection: "products"});
+  deleted: {type:Boolean,required: true, default : false},
+  colors: {type: [Schema.Types.Mixed]},
+  sizes: {type: [Schema.Types.Mixed]},
+},{collection: "products",timestamps: true});
 
 const virtual = productSchema.virtual('id');
 virtual.get(function(){
