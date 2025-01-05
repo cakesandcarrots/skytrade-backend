@@ -6,7 +6,7 @@ const cartSchema = new Schema(
     quantity: { type: Number, required: true },
     product: { type: Schema.Types.ObjectId, ref: "product", required: true },
     user: { type: Schema.Types.ObjectId, ref: "user", required: true },
-    quantity: {type: Schema.Types.Mixed},
+    colors: {type: Schema.Types.Mixed},
     sizes: {type: Schema.Types.Mixed}
   },
 

@@ -1,4 +1,5 @@
 import orderModel from "../models/orderModel.js";
+import productModel from "../models/productModel.js";
 import { invoiceMail } from "../services/common.js";
 import { sendMailReq } from "../services/common.js";
 export const fetchLoggedInUserOrders=async(req,res)=>{
@@ -45,13 +46,19 @@ export const fetchAllOrders = async (req, res) => {
 
 export const createOrder = async (req, res) => {
     const order = new orderModel(req.body);
-    console.log(order)
+    for(let item of order.items){
+      console.log(item.product.id)
+      let product = await productModel.findOne({_id:item.product.id})
+      console.log(product)
+      product.$inc('stock',-1 * item.quantity)
+      product.save();
+    }
+    
     try {
       const response = await order.save()
       await sendMailReq({ to:order.user[0].email  , subject:"Thanks for ordering with Skytrade", html: invoiceMail(order) });
       res.status(201).json(response);
     } catch (err) {
-      console.log(err)
       res.status(400).json(err);
     }
   };

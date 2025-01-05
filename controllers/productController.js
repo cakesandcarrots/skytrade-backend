@@ -11,15 +11,24 @@ export const createProduct = async (req, res) => {
 
 export const fetchProductsByFilters = async (req, res) => {
   let filterConditions = {};
+
+  if(req.query.role!="admin")
+{    filterConditions.stock = { $gt: 0 };
+  filterConditions.deleted = { $ne: true };}
+
+  // multi-category filtering
   if (req.query && req.query.category) {
-     filterConditions.category = req.query.category;
+    filterConditions.category = { $in: req.query.category.split(',') };
   }
+
+  // multi-brand filtering
   if (req.query && req.query.brand) {
-    filterConditions.brand = req.query.brand
-}
+    filterConditions.brand = { $in: req.query.brand.split(',') };
+  }
 
-let query = productModel.find(filterConditions);
+  let query = productModel.find(filterConditions);
 
+  // Sorting logic
   if (req.query && req.query._sort) {
     const sortField = req.query._sort.startsWith("-")
       ? req.query._sort.slice(1)
@@ -28,21 +37,22 @@ let query = productModel.find(filterConditions);
     query = query.sort({ [sortField]: sortOrder });
   }
 
+  // Pagination logic
   if (req.query && req.query._page && req.query._per_page) {
     query = query
       .skip(req.query._per_page * (req.query._page - 1))
       .limit(req.query._per_page);
   }
 
-
   try {
-    const totalItems = await productModel.countDocuments(filterConditions)
-    const data = await query
+    const totalItems = await productModel.countDocuments(filterConditions);
+    const data = await query;
     res.status(200).json({ items: totalItems, data: data });
   } catch (err) {
     res.status(400).json(err);
   }
 };
+
 
 
 export const fetchProductById = async (req,res)=>{
