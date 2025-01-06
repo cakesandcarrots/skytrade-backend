@@ -47,9 +47,7 @@ export const fetchAllOrders = async (req, res) => {
 export const createOrder = async (req, res) => {
     const order = new orderModel(req.body);
     for(let item of order.items){
-      console.log(item.product.id)
       let product = await productModel.findOne({_id:item.product.id})
-      console.log(product)
       product.$inc('stock',-1 * item.quantity)
       product.save();
     }

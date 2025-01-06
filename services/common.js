@@ -18,7 +18,7 @@ export const cookieExtractor = function (req) {
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
-  secure: false, // true for port 465, false for other ports
+  secure: false, 
   auth: {
     user: process.env.NODEMAILER_SENDER_ADDRESS,
     pass: process.env.NODEMAILER_PASSWORD,

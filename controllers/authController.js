@@ -5,6 +5,7 @@ import userModel from "../models/userModel.js";
 import crypto from "crypto";
 import bcrypt from 'bcrypt'
 dotenv.config();
+
 export const login = (req, res) => {
   const token = jwt.sign({ id: req.user.id }, process.env.SECRET_KEY, {
     expiresIn: "1h",

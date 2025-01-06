@@ -27,9 +27,12 @@ export const addToCart = async (req, res) => {
 
   export const deleteFromCart = async (req,res)=>{
     try{
-      const query = await cartModel.findOneAndDelete({user: req.params.id});
+    console.log(req.params)
+      const query = await cartModel.findOneAndDelete({product: req.params.id});
+      console.log("success")
       res.status(200).json(query)
     }catch(err){
+      console.log("error")
       res.status(404).json(err);
     }
   }

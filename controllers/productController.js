@@ -1,4 +1,5 @@
 import productModel from "../models/productModel.js";
+
 export const createProduct = async (req, res) => {
   const product = new productModel(req.body);
   try {
@@ -12,18 +13,19 @@ export const createProduct = async (req, res) => {
 export const fetchProductsByFilters = async (req, res) => {
   let filterConditions = {};
 
-  if(req.query.role!="admin")
-{    filterConditions.stock = { $gt: 0 };
-  filterConditions.deleted = { $ne: true };}
+  if (req.query.role != "admin") {
+    filterConditions.stock = { $gt: 0 };
+    filterConditions.deleted = { $ne: true };
+  }
 
   // multi-category filtering
   if (req.query && req.query.category) {
-    filterConditions.category = { $in: req.query.category.split(',') };
+    filterConditions.category = { $in: req.query.category.split(",") };
   }
 
   // multi-brand filtering
   if (req.query && req.query.brand) {
-    filterConditions.brand = { $in: req.query.brand.split(',') };
+    filterConditions.brand = { $in: req.query.brand.split(",") };
   }
 
   let query = productModel.find(filterConditions);
@@ -53,29 +55,29 @@ export const fetchProductsByFilters = async (req, res) => {
   }
 };
 
-
-
-export const fetchProductById = async (req,res)=>{
-  try{
+export const fetchProductById = async (req, res) => {
+  try {
     const query = await productModel.findById(req.params.id);
-    res.status(200).json(query)
-  }catch(err){
+    res.status(200).json(query);
+  } catch (err) {
     res.status(404).json(err);
   }
-}
+};
 
-export const updateProductById = async (req,res)=>{
-  try{
-    const query = await productModel.findOneAndUpdate({_id:req.params.id}, req.body,{new:true});
+export const updateProductById = async (req, res) => {
+  try {
+    const query = await productModel.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
     res.status(200).json(query);
-  }
-  catch(err){
+  } catch (err) {
     res.status(400).json(err);
   }
-}
+};
 
-export const insertData = async (req,res) => {
-    const result = await productModel.insertMany(req.body);
-    return res.status(200).json(result);
-  
+export const insertData = async (req, res) => {
+  const result = await productModel.insertMany(req.body);
+  return res.status(200).json(result);
 };
