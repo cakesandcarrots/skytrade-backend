@@ -63,9 +63,15 @@ server.use(
   session({
     secret: process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false, 
+    cookie: {
+      secure: true,
+      sameSite: "None",
+      httpOnly: true,
+    },
   })
 );
+
 server.use(passport.initialize());
 server.use(passport.session());
 

@@ -12,18 +12,26 @@ export const login = (req, res) => {
   });
   res
     .cookie("jwt", token, {
-      expires: new Date(Date.now() + 3600000),
+      expires: new Date(Date.now() + 3600000), // 1 hour
+      secure: true,
+      sameSite: "None",
       httpOnly: true,
+
     })
     .status(200)
     .json({ token });
 };
 
 export const logout = async (req, res) => {
-  return res.cookie('jwt',null,{
-    expires: new Date(Date.now()),
-    httpOnly: true
-  }).sendStatus(200);
+  return res
+    .cookie("jwt", null, {
+      expires: new Date(Date.now()),
+      secure: true,
+      sameSite: "None",
+      httpOnly: true,
+
+    })
+    .sendStatus(200);
 };
 
 export const checkAuth = async (req, res) => {

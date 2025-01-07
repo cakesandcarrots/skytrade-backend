@@ -31,8 +31,11 @@ export const createUser = async (req, res) => {
 
       res
         .cookie("jwt", token, {
-          expires: new Date(Date.now() + 3600000), 
+          expires: new Date(Date.now() + 3600000),
+          secure: true,
+          sameSite: "None",
           httpOnly: true,
+
         })
         .status(201)
         .json({ token });
