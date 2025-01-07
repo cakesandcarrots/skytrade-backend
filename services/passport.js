@@ -40,7 +40,6 @@ const configurePassport = () => {
   passport.use(
     "jwt",
     new JwtStrategy(opts, async function (jwt_payload, done) {
-        console.log(jwt_payload,"jwt payload")
       try {
         const user = await userModel.findById(jwt_payload.id);
         if (user) {

@@ -64,7 +64,7 @@ export const resetPasswordRequest = async (req, res) => {
     user.passwordResetToken = token;
     await user.save();
 
-    const resetPage = `http://localhost:5173/auth/reset-password?email=${email}&token=${token}`;
+    const resetPage = `https://skytrade-sigma.vercel.app/auth/reset-password?email=${email}&token=${token}`;
     const subject = "Password Reset Request";
 
     const html = `
@@ -145,7 +145,6 @@ export const resetPasswordRequest = async (req, res) => {
       message: "Password reset email sent.",
     });
   } catch (error) {
-    console.error("Error in resetPasswordRequest:", error);
     res.status(500).json({
       success: false,
       message: "Internal server error. Please try again later.",
